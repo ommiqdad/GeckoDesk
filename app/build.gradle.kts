@@ -18,7 +18,7 @@ val geckoViewVersion = "157.+"
 
 android {
     namespace = "com.desktopbrowser.app"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.desktopbrowser.geckodesk"
