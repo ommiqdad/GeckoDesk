@@ -24,7 +24,27 @@ jobs:
           gradle-version: 9.3.1
 
       - name: Build APK debug
-        run: gradle :app:assembleDebug --no-daemon
+        run: |
+          set +e
+          gradle :app:assembleDebug --no-daemon --console=plain > build.log 2>&1
+          code=$?
+          tail -n 40 build.log
+          if [ $code -ne 0 ]; then
+            MSG=$(sed -n '/What went wrong/,/^\* Try/p' build.log | head -n 60)
+            ERRS=$(grep -E '^(e: |.*error: |.*Unresolved reference)' build.log | head -n 30)
+            for T in "$MSG" "$ERRS"; do
+              [ -z "$T" ] && continue
+              T="${T//'%'/'%25'}"; T="${T//$'\n'/'%0A'}"; T="${T//$'\r'/'%0D'}"
+              echo "::error title=Gradle::$T"
+            done
+          fi
+          exit $code
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: build-log
+          path: build.log
 
       - uses: actions/upload-artifact@v4
         with:
