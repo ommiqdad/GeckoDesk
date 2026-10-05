@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">GeckoDesk</string>
+    <string name="url_hint">Telusuri atau ketik URL</string>
+</resources>
